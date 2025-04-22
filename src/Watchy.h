@@ -30,7 +30,8 @@
   #include "hal/rtc_io_types.h"
   #include "driver/rtc_io.h"
   #define uS_TO_S_FACTOR 1000000ULL  //Conversion factor for micro seconds to seconds
-  #define ADC_VOLTAGE_DIVIDER ((360.0f+100.0f)/360.0f) //Voltage divider at battery ADC  
+  // #define ADC_VOLTAGE_DIVIDER ((360.0f+100.0f)/360.0f) //Voltage divider at battery ADC
+  #define ADC_VOLTAGE_DIVIDER ((100.0f+100.0f)/100.0f) //Voltage divider at battery ADC  
 #else
   #include "WatchyRTC.h"
 #endif
