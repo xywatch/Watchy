@@ -13,8 +13,7 @@ Please use **PlatformIO** for development.
 | SoC     | ESP32-PICO-D4     | ESP32-S3FN8      |
 | RTC      | PCF8536      | EXT 32KHz Crystal      |
 | USB-Serial      | CP2102N/CH340x      | Built-in CDC/JTAG      |
-| PCB | https://github.com/xywatch/watchy-hardware-v2 | https://github.com/xywatch/watchy-hardware-v3|
-
+| PCB | [xywatch/watchy-hardware-v2](https://github.com/xywatch/watchy-hardware-v2) | [xywatch/watchy-hardware-v3](https://github.com/xywatch/watchy-hardware-v3)|
 
 ### Key Notes:  
 - **PlatformIO** is the recommended development environment.  
@@ -34,7 +33,7 @@ v2与v3的差异:
 | SoC     | ESP32-PICO-D4     | ESP32-S3FN8      |
 | RTC      | PCF8536      | EXT 32KHz Crystal      |
 | USB-Serial      | CP2102N/CH340x      | Built-in CDC/JTAG      |
-| PCB | https://github.com/xywatch/watchy-hardware-v2 | https://github.com/xywatch/watchy-hardware-v3|
+| PCB | [xywatch/watchy-hardware-v2](https://github.com/xywatch/watchy-hardware-v2) | [xywatch/watchy-hardware-v3](https://github.com/xywatch/watchy-hardware-v3)|
 
 # Watchy - Fully Open Source E-Paper Watch
 
