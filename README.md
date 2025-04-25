@@ -2,9 +2,7 @@
 
 Since the official [Watchy](https://github.com/sqfmi/Watchy) repository has not been maintained for a long time and there are no plans to continue maintenance, this repository is forked to provide ongoing support.  
 
-Please use **PlatformIO** for development.  
-- For **Watchy V2**, copy `platformio-v2.ini` to `platformio.ini` before development.  
-- For **Watchy V3**, copy `platformio-v3.ini` to `platformio.ini` before development.  
+Please use **PlatformIO** for development.
 
 ### Differences Between V2 and V3:  
 
@@ -24,7 +22,7 @@ Please use **PlatformIO** for development.
 
 因为官方 [Watchy](https://github.com/sqfmi/Watchy) 已很久没有维护且也没有打算继续维护的计划, 所以fork该仓库来维护.
 
-请使用 paltformio 来开发, 对于v2请复制 platformio-v2.ini 为 platformio.ini 进行开发, v3请复制 platformio-v3.ini 为 platformio.ini 进行开发
+请使用 paltformio 来开发
 
 v2与v3的差异:
 
