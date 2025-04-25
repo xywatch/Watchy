@@ -6,7 +6,9 @@
 
 //pins
 
-#ifdef ARDUINO_ESP32S3_DEV //V3
+#ifdef ARDUINO_ESP32S3_DEV // V3
+
+#pragma message "ARDUINO_ESP32S3_DEV"
 
 #define WATCHY_V3_SDA 12
 #define WATCHY_V3_SCL 11
@@ -40,12 +42,7 @@
 #define ACC_INT_MASK  (BIT64(14))
 #define BTN_PIN_MASK  MENU_BTN_MASK|BACK_BTN_MASK|UP_BTN_MASK|DOWN_BTN_MASK
 
-#else //V1,V1.5,V2
-
-#if !defined(ARDUINO_WATCHY_V10) && !defined(ARDUINO_WATCHY_V15) && !defined(ARDUINO_WATCHY_V20)
-
-#pragma message "Please install the latest ESP32 Arduino Core (2.0.5+) and choose Watchy as the target board"
-#pragma message "Hardware revision is not defined at the project level, please define in config.h. Defaulting to ARDUINO_WATCHY_V20"
+#else // V2
 
 #define ARDUINO_WATCHY_V20
 
@@ -61,30 +58,16 @@
 #define VIB_MOTOR_PIN 13
 #define RTC_INT_PIN 27
 
-#if defined (ARDUINO_WATCHY_V10)
-    #define UP_BTN_PIN 32
-    #define BATT_ADC_PIN 33
-    #define UP_BTN_MASK  (BIT64(32))
-    #define RTC_TYPE 1 //DS3231
-#elif defined (ARDUINO_WATCHY_V15)
-    #define UP_BTN_PIN 32
-    #define BATT_ADC_PIN 35
-    #define UP_BTN_MASK  (BIT64(32))
-    #define RTC_TYPE 2 //PCF8563
-#elif defined (ARDUINO_WATCHY_V20)
-    #define UP_BTN_PIN 35
-    #define BATT_ADC_PIN 34
-    #define UP_BTN_MASK  (BIT64(35))
-    #define RTC_TYPE 2 //PCF8563
-#endif
+#define UP_BTN_PIN 35
+#define BATT_ADC_PIN 34
+#define UP_BTN_MASK  (BIT64(35))
+#define RTC_TYPE 2 //PCF8563 
 
 #define MENU_BTN_MASK (BIT64(26))
 #define BACK_BTN_MASK (BIT64(25))
 #define DOWN_BTN_MASK (BIT64(4))
 #define ACC_INT_MASK  (BIT64(14))
 #define BTN_PIN_MASK  MENU_BTN_MASK|BACK_BTN_MASK|UP_BTN_MASK|DOWN_BTN_MASK
-
-#endif
 
 #endif
 
@@ -100,7 +83,7 @@
 #define APP_STATE       1
 #define FW_UPDATE_STATE 2
 #define MENU_HEIGHT     25
-#define MENU_LENGTH     7
+#define MENU_LENGTH     8
 // set time
 #define SET_HOUR   0
 #define SET_MINUTE 1

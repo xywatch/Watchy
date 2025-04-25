@@ -18,11 +18,11 @@
   "dependencies": [
     { "name": "Adafruit GFX Library" },
     { "name": "Arduino_JSON" },
-    { "name": "DS3232RTC" },
     { "name": "NTPClient" },
+    { "name": "Time" },
     {
       "name": "Rtc_Pcf8563",
-      "version": "https://github.com/orbitalair/Rtc_Pcf8563.git#master"
+      "version": "https://github.com/elpaso/Rtc_Pcf8563.git#master"
     },
     {
       "name": "GxEPD2",
@@ -30,7 +30,7 @@
     },
     {
       "name": "WiFiManager",
-      "version": "https://github.com/tzapu/WiFiManager.git#master"
+      "version": "https://github.com/tzapu/WiFiManager.git@2.0.17"
     }
   ]
 }

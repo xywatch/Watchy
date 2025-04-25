@@ -12,12 +12,14 @@
 #include <Fonts/FreeMonoBold9pt7b.h>
 #include "DSEG7_Classic_Bold_53.h"
 #include "Display.h"
-#include "BLE.h"
-#include "bma.h"
+#include "ble/bleota.h"
+#include "ble/blesettings.h"
+#include "bma/bma.h"
 #include "config.h"
+#include "appconfig/appconfig.h"
 #include "esp_chip_info.h"
 #ifdef ARDUINO_ESP32S3_DEV
-  #include "Watchy32KRTC.h"
+  #include "rtc/Watchy32KRTC.h"
   #include "soc/rtc.h"
   #include "soc/rtc_io_reg.h"
   #include "soc/sens_reg.h"
@@ -33,7 +35,7 @@
   // #define ADC_VOLTAGE_DIVIDER ((360.0f+100.0f)/360.0f) //Voltage divider at battery ADC
   #define ADC_VOLTAGE_DIVIDER ((100.0f+100.0f)/100.0f) //Voltage divider at battery ADC  
 #else
-  #include "WatchyRTC.h"
+  #include "rtc/WatchyRTC.h"
 #endif
 
 typedef struct weatherData {
@@ -83,8 +85,8 @@ public:
   void vibMotor(uint8_t intervalMs = 100, uint8_t length = 20);
 
   virtual void handleButtonPress();
-  void showMenu(byte menuIndex, bool partialRefresh);
-  void showFastMenu(byte menuIndex);
+  void showMenu(byte curMenuIndex, bool partialRefresh, bool isFastMenu);
+  void showFastMenu(byte curMenuIndex);
   void showAbout();
   void showBuzz();
   void showAccelerometer();
@@ -95,6 +97,7 @@ public:
   bool syncNTP(long gmt, String ntpServer);
   void setTime();
   void setupWifi();
+  void setupByBle();
   bool connectWiFi();
   weatherData getWeatherData();
   void updateFWBegin();
@@ -105,6 +108,7 @@ public:
 
 private:
   void _bmaConfig();
+  void _handleButtonPressOnMenu(byte menuIndex);
   static void _configModeCallback(WiFiManager *myWiFiManager);
   static uint16_t _readRegister(uint8_t address, uint8_t reg, uint8_t *data,
                                 uint16_t len);
