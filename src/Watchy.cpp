@@ -724,29 +724,86 @@ void Watchy::drawWatchFace() {
   display.println(currentTime.Minute);
 }
 
-weatherData Watchy::getWeatherData() {
+weatherData Watchy::getWeatherData()
+{
   return _getWeatherData(settings.cityID, settings.lat, settings.lon,
-    settings.weatherUnit, settings.weatherLang, settings.weatherURL,
-    settings.weatherAPIKey, settings.weatherUpdateInterval);
+                          settings.weatherUnit, settings.weatherLang, settings.weatherURL,
+                          settings.weatherAPIKey, settings.weatherUpdateInterval);
 }
 
+/*
+{
+  "coord": {
+    "lon": 121.4581,
+    "lat": 31.2222
+  },
+  "weather": [
+    {
+      "id": 803, // weatherConditionCode
+      "main": "Clouds",
+      "description": "broken clouds",
+      "icon": "04d"
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": 13.92, // temperature
+    "feels_like": 13.25,
+    "temp_min": 13.92,
+    "temp_max": 13.92,
+    "pressure": 1023,
+    "humidity": 72,
+    "sea_level": 1023,
+    "grnd_level": 1022
+  },
+  "visibility": 10000,
+  "wind": {
+    "speed": 5,
+    "deg": 90
+  },
+  "clouds": {
+    "all": 75
+  },
+  "dt": 1737602065,
+  "sys": {
+    "type": 1,
+    "id": 9659,
+    "country": "CN",
+    "sunrise": 1737586265,
+    "sunset": 1737624028
+  },
+  "timezone": 28800,
+  "id": 1796236,
+  "name": "Shanghai",
+  "cod": 200
+}
+*/
 weatherData Watchy::_getWeatherData(String cityID, String lat, String lon, String units, String lang,
-                                   String url, String apiKey,
-                                   uint8_t updateInterval) {
+                                          String url, String apiKey,
+                                          uint8_t updateInterval)
+{
+  Serial.println("_getWeatherData");
   currentWeather.isMetric = units == String("metric");
-  if (weatherIntervalCounter < 0) { //-1 on first run, set to updateInterval
-    weatherIntervalCounter = updateInterval;
-  }
-  if (weatherIntervalCounter >=
-      updateInterval) { // only update if WEATHER_UPDATE_INTERVAL has elapsed
-                        // i.e. 30 minutes
-    if (connectWiFi()) {
-      HTTPClient http; // Use Weather API for live data if WiFi is connected
+
+  RTC.read(currentTime);
+  uint16_t curMinute = currentTime.Day * 24 * 60 + currentTime.Hour * 60 + currentTime.Minute;
+  Serial.println(curMinute);
+  Serial.println(currentWeather.lastFetchWeatherMinute);
+  Serial.println(curMinute - currentWeather.lastFetchWeatherMinute);
+  if (curMinute - currentWeather.lastFetchWeatherMinute >= updateInterval)
+  { // only update if WEATHER_UPDATE_INTERVAL has elapsed i.e. 30 minutes
+    if (connectWiFi())
+    {
+      Serial.println("WIFI connected");
+      HTTPClient http;              // Use Weather API for live data if WiFi is connected
       http.setConnectTimeout(3000); // 3 second max timeout
       String weatherQueryURL = url;
-      if(cityID != ""){
+      if (cityID != "")
+      {
         weatherQueryURL.replace("{cityID}", cityID);
-      }else{
+      }
+      else
+      {
         weatherQueryURL.replace("{lat}", lat);
         weatherQueryURL.replace("{lon}", lon);
       }
@@ -755,39 +812,67 @@ weatherData Watchy::_getWeatherData(String cityID, String lat, String lon, Strin
       weatherQueryURL.replace("{apiKey}", apiKey);
       http.begin(weatherQueryURL.c_str());
       int httpResponseCode = http.GET();
-      if (httpResponseCode == 200) {
-        String payload             = http.getString();
-        JSONVar responseObject     = JSON.parse(payload);
-        currentWeather.temperature = int(responseObject["main"]["temp"]);
-        currentWeather.weatherConditionCode =
-            int(responseObject["weather"][0]["id"]);
-        currentWeather.weatherDescription =
-		        JSONVar::stringify(responseObject["weather"][0]["main"]);
-	      currentWeather.external = true;
-		        breakTime((time_t)(int)responseObject["sys"]["sunrise"], currentWeather.sunrise);
-		        breakTime((time_t)(int)responseObject["sys"]["sunset"], currentWeather.sunset);
+      if (httpResponseCode == 200)
+      {
+        String payload = http.getString();
+        JSONVar responseObject = JSON.parse(payload);
+        currentWeather.external = true;
+
+        // 只保留一位小数
+        currentWeather.temperature = floor((double_t)responseObject["main"]["temp"] * 10) / 10;
+        currentWeather.minTemp = floor((double_t)responseObject["main"]["temp_min"] * 10) / 10;
+        currentWeather.maxTemp = floor((double_t)responseObject["main"]["temp_max"] * 10) / 10;
+
+        currentWeather.weatherConditionCode = int(responseObject["weather"][0]["id"]);
+
+        const char *weatherDescription = responseObject["weather"][0]["main"]; // JSON.stringify()会把字符串加一对引号
+        strncpy(currentWeather.weatherDescription, weatherDescription, sizeof(currentWeather.weatherDescription) - 1);
+        // strncpy(dest, src, sizeof(dest) - 1);
+        currentWeather.weatherDescription[sizeof(currentWeather.weatherDescription) - 1] = '\0';
+
+        const char *city = responseObject["name"];
+        strncpy(currentWeather.city, city, sizeof(currentWeather.city) - 1);
+        currentWeather.city[sizeof(currentWeather.city) - 1] = '\0';
+
+        int gmtOffset = int(responseObject["timezone"]);
+
+        // 把时区也加上, 不然时间不对
+        breakTime((time_t)(int)responseObject["sys"]["sunrise"] + gmtOffset, currentWeather.sunrise);
+        breakTime((time_t)(int)responseObject["sys"]["sunset"] + gmtOffset, currentWeather.sunset);
+
+        currentWeather.lastFetchWeatherMinute = curMinute;
+
         // sync NTP during weather API call and use timezone of lat & lon
-        gmtOffset = int(responseObject["timezone"]);
         syncNTP(gmtOffset);
-      } else {
+        Serial.println("Get Weather from net ok");
+        Serial.println(payload);
+      }
+      else
+      {
         // http error
+        Serial.println("Get Weather from net error");
       }
       http.end();
       // turn off radios
       WiFi.mode(WIFI_OFF);
-      btStop();
-    } else { // No WiFi, use internal temperature sensor
+      btStop(); // 关闭蓝牙
+    }
+    else
+    { // No WiFi, use internal temperature sensor
+      Serial.println("No WiFi, use internal temperature sensor");
       uint8_t temperature = sensor.readTemperature(); // celsius
-      if (!currentWeather.isMetric) {
+      if (!currentWeather.isMetric)
+      {
         temperature = temperature * 9. / 5. + 32.; // fahrenheit
       }
-      currentWeather.temperature          = temperature;
+      currentWeather.temperature = temperature;
       currentWeather.weatherConditionCode = 800;
-      currentWeather.external             = false;
+      currentWeather.external = false;
     }
-    weatherIntervalCounter = 0;
-  } else {
-    weatherIntervalCounter++;
+  }
+  else
+  {
+    Serial.println("Get weather from cache");
   }
   return currentWeather;
 }

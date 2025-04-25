@@ -38,14 +38,29 @@
   #include "rtc/WatchyRTC.h"
 #endif
 
+// typedef struct weatherData {
+//   int8_t temperature;
+//   int16_t weatherConditionCode;
+//   bool isMetric;
+//   String weatherDescription;
+//   bool external;
+//   tmElements_t sunrise;
+//   tmElements_t sunset;
+// } weatherData;
+
 typedef struct weatherData {
-  int8_t temperature;
+  double_t temperature;
   int16_t weatherConditionCode;
   bool isMetric;
-  String weatherDescription;
+  // String weatherDescription; // 不能用String, 会在deep sleep丢失
+  char weatherDescription[20];
+  char city[20];
   bool external;
   tmElements_t sunrise;
   tmElements_t sunset;
+  double_t minTemp; // 不能用float
+  double_t maxTemp;
+  uint16_t lastFetchWeatherMinute;
 } weatherData;
 
 typedef struct watchySettings {
