@@ -13,6 +13,8 @@ Please use **PlatformIO** for development.
 | USB-Serial      | CP2102N/CH340x      | Built-in CDC/JTAG      |
 | PCB | [xywatch/watchy-hardware-v2](https://github.com/xywatch/watchy-hardware-v2) | [xywatch/watchy-hardware-v3](https://github.com/xywatch/watchy-hardware-v3)|
 
+Current issues with v3: Using EXT 32KHz Crystal clock results in 1-2 minutes of inaccuracy after several days and high power consumption.
+
 ### Key Notes:  
 - **PlatformIO** is the recommended development environment.  
 - Ensure the correct `.ini` file is used for your Watchy version (V2/V3).  
@@ -32,6 +34,8 @@ v2与v3的差异:
 | RTC      | PCF8536      | EXT 32KHz Crystal      |
 | USB-Serial      | CP2102N/CH340x      | Built-in CDC/JTAG      |
 | PCB | [xywatch/watchy-hardware-v2](https://github.com/xywatch/watchy-hardware-v2) | [xywatch/watchy-hardware-v3](https://github.com/xywatch/watchy-hardware-v3)|
+
+v3当前的问题: 使用EXT 32KHz Crystal时钟几天后就会不准1-2分钟且功耗大
 
 # Watchy - Fully Open Source E-Paper Watch
 
